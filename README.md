@@ -1,1 +1,3 @@
-# debian-cusomisation
+# Debian Customisation
+
+## .bashrc
