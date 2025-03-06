@@ -2,8 +2,13 @@
 
 # Define variables
 INSTALL_DIR="$(pwd)"  # Assumes script is run from cloned repo directory
-BASHRC_PATH="$INSTALL_DIR/bashrc.txt"
+BASHRC_PATH="$INSTALL_DIR/.bashrc"
 TARGET_BASHRC="$HOME/.bashrc"
+
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" &> /dev/null
+}
 
 # Function to show a progress indicator while a command runs
 show_progress() {
@@ -62,27 +67,55 @@ show_progress "lf"
 sudo mv lf /usr/local/bin/ >/dev/null 2>&1
 
 # Install VS Code
-echo "Installing VS Code..."
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-sudo install -o root -g root -m 644 packages.microsoft.gpg /usr/share/keyrings/ >/dev/null 2>&1
-echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null
-sudo apt update >/dev/null 2>&1 &
-show_progress "VS Code"
-sudo apt install -y code >/dev/null 2>&1 &
-show_progress "VS Code"
+# echo "Installing VS Code..."
+# wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+# sudo install -o root -g root -m 644 packages.microsoft.gpg /usr/share/keyrings/ >/dev/null 2>&1
+# echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null
+# sudo apt update >/dev/null 2>&1 &
+# show_progress "VS Code"
+# sudo apt install -y code >/dev/null 2>&1 &
+# show_progress "VS Code"
 
-rm -f packages.microsoft.gpg
+# rm -f packages.microsoft.gpg
 
-# Install Doom Emacs
-if [ ! -d "$HOME/.emacs.d" ]; then
-    echo "Installing Doom Emacs..."
-    git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs >/dev/null 2>&1 &
-    show_progress "Doom Emacs"
-    ~/.config/emacs/bin/doom install >/dev/null 2>&1 &
-    show_progress "Doom Emacs Setup"
+# Install Doom Emacs using the previous script logic
+if ! command_exists emacs; then
+    echo "Installing Emacs..."
+    sudo apt install -y emacs
 else
-    echo "✔ Doom Emacs is already installed."
+    echo "Emacs is already installed. Skipping..."
 fi
+
+if [ ! -d "$HOME/.config/emacs" ]; then
+    echo "Cloning Doom Emacs..."
+    git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
+else
+    echo "Doom Emacs is already installed. Skipping cloning..."
+fi
+
+~/.config/emacs/bin/doom install
+
+if ! grep -q 'export PATH="$HOME/.config/emacs/bin:$PATH"' ~/.bashrc; then
+    echo "Adding Doom Emacs to PATH..."
+    echo 'export PATH="$HOME/.config/emacs/bin:$PATH"' >> ~/.bashrc
+    source ~/.bashrc
+else
+    echo "Doom Emacs is already in PATH. Skipping..."
+fi
+
+doom sync
+
+if ! grep -q "alias notes=\"emacsclient -c -a 'emacs' &\"" ~/.bashrc; then
+    echo "Adding aliases..."
+    echo 'alias notes="emacsclient -c -a 'emacs' &"' >> ~/.bashrc
+    echo 'alias emacs="emacsclient -c -a 'emacs' &"' >> ~/.bashrc
+else
+    echo "Aliases already exist. Skipping..."
+fi
+
+echo "Doom Emacs installation and setup complete!"
+
+# Enable Emacs as a systemd user service
 systemctl --user enable --now emacs
 
 # Install Pyenv (Python version manager) but don’t install Python with it
