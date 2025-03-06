@@ -2,71 +2,113 @@
 
 # Define variables
 INSTALL_DIR="$(pwd)"  # Assumes script is run from cloned repo directory
-BASHRC_PATH="$INSTALL_DIR/bashrc.txt"  # The provided .bashrc file
+BASHRC_PATH="$INSTALL_DIR/bashrc.txt"
 TARGET_BASHRC="$HOME/.bashrc"
 
-# Update and install required packages
-echo "Updating package list and upgrading system..."
-sudo apt update && sudo apt upgrade -y
+# Function to show a progress indicator while a command runs
+show_progress() {
+    local pid=$!
+    local delay=0.1
+    local spin='-\|/'
 
-echo "Installing required packages..."
-sudo apt install -y git curl wget vim build-essential unzip ripgrep fd-find \
-    emacs libgccjit-12-dev gcc zsh tmux \
-    make build-essential libssl-dev zlib1g-dev libbz2-dev \
-    libreadline-dev libsqlite3-dev wget curl llvm libncursesw5-dev \
-    xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
-    autojump fastfetch bat fd-find python3 python3-pip python3-venv
+    while ps -p $pid &>/dev/null; do
+        for i in {0..3}; do
+            echo -ne "\r${spin:i:1} Installing $1..."
+            sleep $delay
+        done
+    done
+    wait $pid # Capture exit status
+    if [ $? -eq 0 ]; then
+        echo -e "\r✔ $1 installed successfully!            "
+    else
+        echo -e "\r✖ Error installing $1. Check logs.      "
+    fi
+}
+
+# Update package list
+echo "Updating package list..."
+sudo apt update >/dev/null 2>&1 &
+show_progress "System Update"
+
+# Upgrade packages
+echo "Upgrading packages..."
+sudo apt upgrade -y >/dev/null 2>&1 &
+show_progress "System Upgrade"
+
+# Install required packages
+declare -a packages=(
+    "git" "curl" "wget" "vim" "build-essential" "unzip" "ripgrep" "fd-find"
+    "emacs" "libgccjit-12-dev" "gcc" "zsh" "tmux"
+    "make" "libssl-dev" "zlib1g-dev" "libbz2-dev"
+    "libreadline-dev" "libsqlite3-dev" "llvm" "libncursesw5-dev"
+    "xz-utils" "tk-dev" "libxml2-dev" "libxmlsec1-dev" "libffi-dev" "liblzma-dev"
+    "autojump" "neofetch" "bat" "fd-find" "python3" "python3-pip" "python3-venv"
+)
+
+for package in "${packages[@]}"; do
+    sudo apt install -y "$package" >/dev/null 2>&1 &
+    show_progress "$package"
+done
 
 # Install Neovim
 echo "Installing Neovim..."
-sudo apt install -y neovim
+sudo apt install -y neovim >/dev/null 2>&1 &
+show_progress "Neovim"
 
-# Install lf (lightweight file manager)
+# Install lf (file manager)
 echo "Installing lf file manager..."
-curl -fsSL https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz | tar xz
-sudo mv lf /usr/local/bin/
+curl -fsSL https://github.com/gokcehan/lf/releases/latest/download/lf-linux-amd64.tar.gz | tar xz >/dev/null 2>&1 &
+show_progress "lf"
+sudo mv lf /usr/local/bin/ >/dev/null 2>&1
 
 # Install VS Code
 echo "Installing VS Code..."
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-sudo install -o root -g root -m 644 packages.microsoft.gpg /usr/share/keyrings/
-echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list
-sudo apt update && sudo apt install -y code
+sudo install -o root -g root -m 644 packages.microsoft.gpg /usr/share/keyrings/ >/dev/null 2>&1
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null
+sudo apt update >/dev/null 2>&1 &
+show_progress "VS Code"
+sudo apt install -y code >/dev/null 2>&1 &
+show_progress "VS Code"
+
 rm -f packages.microsoft.gpg
 
 # Install Doom Emacs
 if [ ! -d "$HOME/.emacs.d" ]; then
     echo "Installing Doom Emacs..."
-    git clone --depth 1 https://github.com/hlissner/doom-emacs.git ~/.emacs.d
-    ~/.emacs.d/bin/doom install
+    git clone --depth 1 https://github.com/hlissner/doom-emacs.git ~/.emacs.d >/dev/null 2>&1 &
+    show_progress "Doom Emacs"
+    ~/.emacs.d/bin/doom install >/dev/null 2>&1 &
+    show_progress "Doom Emacs Setup"
 else
-    echo "Doom Emacs is already installed."
+    echo "✔ Doom Emacs is already installed."
 fi
 
-# Install Pyenv (Python version manager) but don't install Python with it
+# Install Pyenv (Python version manager) but don’t install Python with it
 if [ ! -d "$HOME/.pyenv" ]; then
     echo "Installing pyenv..."
-    curl https://pyenv.run | bash
+    curl https://pyenv.run | bash >/dev/null 2>&1 &
+    show_progress "Pyenv"
 
-    # Ensure pyenv is set up in the bashrc file
+    # Ensure pyenv is set up in .bashrc
     echo 'export PYENV_ROOT="$HOME/.pyenv"' >> "$HOME/.bashrc"
     echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> "$HOME/.bashrc"
     echo 'eval "$(pyenv init --path)"' >> "$HOME/.bashrc"
 else
-    echo "Pyenv is already installed."
+    echo "✔ Pyenv is already installed."
 fi
 
 # Copy the custom .bashrc file from the repo
 if [ -f "$BASHRC_PATH" ]; then
     echo "Applying custom .bashrc..."
     cp "$BASHRC_PATH" "$TARGET_BASHRC"
+    echo "✔ .bashrc applied!"
 
     # Reload bashrc
-    echo "Reloading .bashrc..."
     source "$TARGET_BASHRC"
 else
-    echo "Error: .bashrc file not found in the repository!"
+    echo "✖ Error: .bashrc file not found in the repository!"
     exit 1
 fi
 
-echo "Setup completed successfully!"
+echo "🎉 Setup completed successfully!"
