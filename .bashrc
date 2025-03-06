@@ -906,7 +906,7 @@ ex=:\
 alias notes="emacsclient -c -a 'emacs' &"
 alias emacs="emacsclient -c -a 'emacs' &"
 
-neofetch --ascii ~/Documents/ascii_art/asciiArt.txt  
+fastfetch 
 echo "It's DedSec, bitches!"
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
