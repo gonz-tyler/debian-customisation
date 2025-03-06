@@ -30,7 +30,7 @@ sudo apt install git -y
 
 Then, clone this repository:
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git && cd YOUR_REPO
+git clone https://github.com/gonz-tyler/debian-customisation.git && cd debian-customisation
 ```
 ### 2. Run the Installation Script
 
