@@ -100,7 +100,7 @@ else
     echo "Doom Emacs is already installed. Skipping cloning..."
 fi
 
-$HOME/.config/emacs/bin/doom install  >/dev/null 2>&1 &
+$HOME/.config/emacs/bin/doom install -y >/dev/null 2>&1 &
 show_progress "doomemacs"
 
 if ! grep -q 'export PATH="$HOME/.config/emacs/bin:$PATH"' $HOME/.bashrc; then
