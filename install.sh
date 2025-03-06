@@ -111,7 +111,8 @@ else
     echo "Doom Emacs is already in PATH. Skipping..."
 fi
 
-doom sync
+doom sync >/dev/null 2>&1 &
+show_progress "doom sync"
 
 if ! grep -q "alias notes=\"emacsclient -c -a 'emacs' &\"" ~/.bashrc; then
     echo "Adding aliases..."
