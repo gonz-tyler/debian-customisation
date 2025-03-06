@@ -7,10 +7,15 @@ This script automates the installation of essential tools and configuration for 
 ## Features
 
 ✅ Installs essential software: git, vim, neovim, emacs, doom emacs, VS Code, lf, tmux, zsh, etc.
+
 ✅ Sets up pyenv for Python version management
+
 ✅ Enables automatic activation of Python virtual environments when navigating directories
+
 ✅ Configures terminal with a custom .bashrc from the repository
+
 ✅ Includes quality-of-life improvements: bat, autojump, fd-find, neofetch, etc.
+
 ✅ Uses a clean installation process with a progress indicator
 
 ## Installation
