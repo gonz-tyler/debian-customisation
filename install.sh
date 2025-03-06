@@ -95,18 +95,18 @@ fi
 
 if [ ! -d "$HOME/.config/emacs" ]; then
     echo "Cloning Doom Emacs..."
-    git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
+    git clone --depth 1 https://github.com/doomemacs/doomemacs $HOME/.config/emacs
 else
     echo "Doom Emacs is already installed. Skipping cloning..."
 fi
 
-~/.config/emacs/bin/doom install  >/dev/null 2>&1 &
+$HOME/.config/emacs/bin/doom install  >/dev/null 2>&1 &
 show_progress "doomemacs"
 
-if ! grep -q 'export PATH="$HOME/.config/emacs/bin:$PATH"' ~/.bashrc; then
+if ! grep -q 'export PATH="$HOME/.config/emacs/bin:$PATH"' $HOME/.bashrc; then
     echo "Adding Doom Emacs to PATH..."
-    echo 'export PATH="$HOME/.config/emacs/bin:$PATH"' >> ~/.bashrc
-    source ~/.bashrc
+    echo 'export PATH="$HOME/.config/emacs/bin:$PATH"' >> $HOME/.bashrc
+    source $HOME/.bashrc
 else
     echo "Doom Emacs is already in PATH. Skipping..."
 fi
@@ -114,10 +114,10 @@ fi
 doom sync >/dev/null 2>&1 &
 show_progress "doom sync"
 
-if ! grep -q "alias notes=\"emacsclient -c -a 'emacs' &\"" ~/.bashrc; then
+if ! grep -q "alias notes=\"emacsclient -c -a 'emacs' &\"" $HOME/.bashrc; then
     echo "Adding aliases..."
-    echo 'alias notes="emacsclient -c -a 'emacs' &"' >> ~/.bashrc
-    echo 'alias emacs="emacsclient -c -a 'emacs' &"' >> ~/.bashrc
+    echo 'alias notes="emacsclient -c -a 'emacs' &"' >> $HOME/.bashrc
+    echo 'alias emacs="emacsclient -c -a 'emacs' &"' >> $HOME/.bashrc
 else
     echo "Aliases already exist. Skipping..."
 fi
