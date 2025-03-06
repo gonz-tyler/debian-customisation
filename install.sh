@@ -76,9 +76,9 @@ rm -f packages.microsoft.gpg
 # Install Doom Emacs
 if [ ! -d "$HOME/.emacs.d" ]; then
     echo "Installing Doom Emacs..."
-    git clone --depth 1 https://github.com/hlissner/doom-emacs.git ~/.emacs.d >/dev/null 2>&1 &
+    git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs >/dev/null 2>&1 &
     show_progress "Doom Emacs"
-    ~/.emacs.d/bin/doom install >/dev/null 2>&1 &
+    ~/.config/emacs/bin/doom install >/dev/null 2>&1 &
     show_progress "Doom Emacs Setup"
 else
     echo "✔ Doom Emacs is already installed."
