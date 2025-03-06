@@ -15,7 +15,7 @@ sudo apt install -y git curl wget vim build-essential unzip ripgrep fd-find \
     make build-essential libssl-dev zlib1g-dev libbz2-dev \
     libreadline-dev libsqlite3-dev wget curl llvm libncursesw5-dev \
     xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
-    autojump neofetch bat fd-find python3 python3-pip python3-venv
+    autojump fastfetch bat fd-find python3 python3-pip python3-venv
 
 # Install Neovim
 echo "Installing Neovim..."
