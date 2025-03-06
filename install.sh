@@ -50,7 +50,7 @@ show_progress "System Upgrade"
 # Install required packages
 declare -a packages=(
     "git" "curl" "wget" "vim" "build-essential" "unzip" "ripgrep" "fd-find"
-    "emacs" "libgccjit-12-dev" "gcc" "zsh" "tmux"
+    "libgccjit-12-dev" "gcc" "zsh" "tmux"
     "make" "libssl-dev" "zlib1g-dev" "libbz2-dev"
     "libreadline-dev" "libsqlite3-dev" "llvm" "libncursesw5-dev"
     "xz-utils" "tk-dev" "libxml2-dev" "libxmlsec1-dev" "libffi-dev" "liblzma-dev"
