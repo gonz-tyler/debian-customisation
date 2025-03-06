@@ -83,6 +83,7 @@ if [ ! -d "$HOME/.emacs.d" ]; then
 else
     echo "✔ Doom Emacs is already installed."
 fi
+systemctl --user enable --now emacs
 
 # Install Pyenv (Python version manager) but don’t install Python with it
 if [ ! -d "$HOME/.pyenv" ]; then
