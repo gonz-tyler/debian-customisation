@@ -13,7 +13,7 @@ command_exists() {
 # Function to show a progress indicator while a command runs
 show_progress() {
     local pid=$!
-    local delay=0.1
+    local delay=0.2
     local spin='-\|/'
 
     while ps -p $pid &>/dev/null; do
@@ -29,6 +29,13 @@ show_progress() {
         echo -e "\r✖ Error installing $1. Check logs.      "
     fi
 }
+
+echo "Installing Software Properties Common..."
+sudo apt-get install software-properties-common >/dev/null 2>&1 &
+show_progress "SPC"
+echo "Adding necessary PPAs..."
+sudo add-apt-repository ppa:zhangsongcui3371/fastfetch >/dev/null 2>&1 &
+show_progress "PPAs"
 
 # Update package list
 echo "Updating package list..."
@@ -93,7 +100,8 @@ else
     echo "Doom Emacs is already installed. Skipping cloning..."
 fi
 
-~/.config/emacs/bin/doom install
+~/.config/emacs/bin/doom install  >/dev/null 2>&1 &
+show_progress "doomemacs"
 
 if ! grep -q 'export PATH="$HOME/.config/emacs/bin:$PATH"' ~/.bashrc; then
     echo "Adding Doom Emacs to PATH..."
@@ -116,7 +124,7 @@ fi
 echo "Doom Emacs installation and setup complete!"
 
 # Enable Emacs as a systemd user service
-systemctl --user enable --now emacs
+# systemctl --user enable --now emacs
 
 # Install Pyenv (Python version manager) but don’t install Python with it
 if [ ! -d "$HOME/.pyenv" ]; then
