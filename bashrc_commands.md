@@ -1,0 +1,12 @@
+# Commands from .bashrc
+- `ebrc` - edit .bashrc file
+- `home` - change directory to home
+- `ftext "<input text>"` - searches for text in all files in current folder
+- `cpg <basedir> <destdir>` - copy and go to directory
+- `mvg <basedir> <destdir>` - move and go to directory
+- `mkdirg <dirname>` - create and go to directory
+- `whatismyip` - IP address lookup
+- `notes` - start emacs client
+- `emacs` - start emacs client
+- `lazyg "<commit message>"` - git add . git commit git push
+- `lazyg "<commit message>"` - git add . git commit
