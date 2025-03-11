@@ -97,6 +97,8 @@ The script replaces the default .bashrc with a custom version that:
 
 - Improve logo ascii art
 
+- Clean up script comments and remove unneccessary functions
+
 ## Contributing
 
 Feel free to open an issue or submit a pull request for improvements!
