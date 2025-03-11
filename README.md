@@ -91,6 +91,12 @@ The script replaces the default .bashrc with a custom version that:
 
 - You can modify the `.bashrc` file in the repo before installation to customize it further
 
+## Future Improvements
+
+- Automate installation of zsh-autosuggestions when zsh shell is picked
+
+- Improve logo ascii art
+
 ## Contributing
 
 Feel free to open an issue or submit a pull request for improvements!
