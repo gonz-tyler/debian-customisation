@@ -3,7 +3,7 @@
 # Define variables
 INSTALL_DIR="$(pwd)"  # Assumes script is run from cloned repo directory
 BASHRC_PATH="$INSTALL_DIR/.bashrc"
-TARGET_BASHRC="$HOME/.bashrc"
+ZSHRC_PATH="$INSTALL_DIR/.zshrc"
 
 # Function to check if a command exists
 command_exists() {
@@ -29,6 +29,92 @@ show_progress() {
         echo -e "\r✖ Error installing $1. Check logs.      "
     fi
 }
+
+# Clear the screen
+clear
+
+# Define colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+# Display custom ASCII art for DedSoc
+echo -e "${CYAN}"
+echo "░▒▓███████▓▒░░▒▓████████▓▒░▒▓███████▓▒░ ░▒▓███████▓▒░░▒▓██████▓▒░ ░▒▓██████▓▒░       "
+echo "░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░      "
+echo "░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░             "
+echo "░▒▓█▓▒░░▒▓█▓▒░▒▓██████▓▒░ ░▒▓█▓▒░░▒▓█▓▒░░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░             "
+echo "░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░             "
+echo "░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░      "
+echo "░▒▓███████▓▒░░▒▓████████▓▒░▒▓███████▓▒░░▒▓███████▓▒░ ░▒▓██████▓▒░ ░▒▓██████▓▒░       "
+echo -e "${NC}"
+echo -e "${PURPLE}===========================================${NC}"
+echo -e "${YELLOW}Welcome to ${RED}DedSoc${YELLOW} Custom Debian Installer${NC}"
+echo -e "${GREEN}Your system, your rules! Let's make it awesome.${NC}"
+echo -e "${PURPLE}===========================================${NC}"
+
+# Ask the user if they want to start
+while true; do
+    echo -e "${BLUE}Do you want to start the installation? (y/n)${NC}"
+    read -r yn
+    case $yn in
+        [Yy]* )
+            echo -e "${GREEN}Starting DedSoc installation...${NC}"
+
+            # Ask the user if they want to use bash or zsh
+            while true; do
+                echo -e "${BLUE}Which shell do you want to use? (bash/zsh)${NC}"
+                read -r shell_choice
+                case $shell_choice in
+                    [Bb]* )
+                        echo -e "${GREEN}Setting bash as the default shell...${NC}"
+                        # Ensure bash is installed
+                        if ! command -v bash &> /dev/null; then
+                            echo -e "${YELLOW}Bash is not installed. Installing bash...${NC}"
+                            sudo apt-get update && sudo apt-get install -y bash
+                        fi
+                        # Set bash as the default shell
+                        chsh -s /bin/bash
+                        echo -e "${GREEN}Bash is now the default shell.${NC}"
+                        TARGET_RC="$HOME/.bashrc"
+                        RC_PATH="$BASHRC_PATH"
+                        break
+                        ;;
+                    [Zz]* )
+                        echo -e "${GREEN}Setting zsh as the default shell...${NC}"
+                        # Ensure zsh is installed
+                        if ! command -v zsh &> /dev/null; then
+                            echo -e "${YELLOW}Zsh is not installed. Installing zsh...${NC}"
+                            sudo apt-get update && sudo apt-get install -y zsh
+                        fi
+                        # Set zsh as the default shell
+                        chsh -s /bin/zsh
+                        echo -e "${GREEN}Zsh is now the default shell.${NC}"
+                        TARGET_RC="$HOME/.zshrc"
+                        RC_PATH="$ZSHRC_PATH"
+                        break
+                        ;;
+                    * )
+                        echo -e "${RED}Please answer with 'bash' or 'zsh'.${NC}"
+                        ;;
+                esac
+            done
+
+            break
+            ;;
+        [Nn]* )
+            echo -e "${RED}Installation cancelled. Exiting...${NC}"
+            exit 0
+            ;;
+        * )
+            echo -e "${RED}Please answer with 'y' or 'n'.${NC}"
+            ;;
+    esac
+done
 
 echo "Installing Software Properties Common..."
 sudo apt-get install software-properties-common >/dev/null 2>&1 &
@@ -141,16 +227,20 @@ else
     echo "✔ Pyenv is already installed."
 fi
 
-# Copy the custom .bashrc file from the repo
-if [ -f "$BASHRC_PATH" ]; then
-    echo "Applying custom .bashrc..."
-    cp "$BASHRC_PATH" "$TARGET_BASHRC"
-    echo "✔ .bashrc applied!"
+# Copy the custom configuration file from the repo
+if [ -f "$RC_PATH" ]; then
+    echo "Applying custom $TARGET_RC..."
+    cp "$RC_PATH" "$TARGET_RC"
+    echo "✔ $TARGET_RC applied!"
 
-    # Reload bashrc
-    source "$TARGET_BASHRC"
+    # Reload the configuration file
+    if [[ "$SHELL_TYPE" == "bash" ]]; then
+        source "$TARGET_RC"
+    elif [[ "$SHELL_TYPE" == "zsh" ]]; then
+        source "$TARGET_RC"
+    fi
 else
-    echo "✖ Error: .bashrc file not found in the repository!"
+    echo "✖ Error: $RC_PATH file not found in the repository!"
     exit 1
 fi
 
