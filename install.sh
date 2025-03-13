@@ -90,6 +90,11 @@ while true; do
                         if ! command -v zsh &> /dev/null; then
                             echo -e "${YELLOW}Zsh is not installed. Installing zsh...${NC}"
                             sudo apt-get update && sudo apt-get install -y zsh
+                            echo -e "${Green}Installing Oh-My-Zsh...${NC}"
+                            sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+                            echo -e "${Green}Installing Plugins...${NC}"
+                            git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH_CUSTOM/plugins/zsh-autosuggestions
+                            git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
                         fi
                         # Set zsh as the default shell
                         chsh -s /bin/zsh
