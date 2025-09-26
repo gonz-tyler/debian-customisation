@@ -1016,6 +1016,7 @@ ex=:\
 "
 alias notes="emacsclient -c -a 'emacs' &"
 alias emacs="emacsclient -c -a 'emacs' &"
+alias mediaserver="ssh gonz@192.168.1.178" 
 
 alias fastfetch="fastfetch --logo ~/.config/fastfetch_logo.txt --logo-type file --logo-color-1 blue"
 fastfetch
